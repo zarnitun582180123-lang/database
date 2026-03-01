@@ -83,6 +83,30 @@ function get_students() {
     
     return []; // Data မရှိရင် Empty Array ပြန်ပေးမယ်
 }
+// ၅။ ID ဖြင့် ကျောင်းသားဒေတာ ရှာရန်
+function get_student_by_id($id) {
+    // courses table နှင့် join ပြီး ဆွဲထုတ်ပါမည်
+    $url = SUPABASE_URL . "/rest/v1/students?id=eq." . $id . "&select=*,courses(course_name)";
+    $res = curl_request($url);
+    
+    if (!empty($res['data']) && is_array($res['data'])) {
+        return $res['data'][0]; // ပထမဆုံး record ကို ပြန်ပေးမည်
+    }
+    return null;
+}
+
+// ၆။ ကျောင်းသားကို Approve လုပ်ရန်
+function approve_student($id) {
+    $url = SUPABASE_URL . "/rest/v1/students?id=eq." . $id;
+    $payload = ['status' => 'approved'];
+    
+    // PATCH method ဖြင့် status ကို update လုပ်ခြင်း
+    $res = curl_request($url, 'PATCH', $payload);
+    
+    // HTTP Code 200 သို့မဟုတ် 204 ဆိုလျှင် အောင်မြင်သည်ဟု သတ်မှတ်သည်
+    return ($res['code'] >= 200 && $res['code'] < 300);
+}
 ?>
+
 
 
