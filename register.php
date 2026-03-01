@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // register.php
 require_once 'supabase.php';
 require 'vendor/autoload.php'; 
@@ -195,5 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 </html>
+
 
 
