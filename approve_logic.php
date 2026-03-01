@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
             $mail->Username   = 'zarnitun582180123@gmail.com'; 
             $mail->Password   = 'kqfvxeenuqjekbbp'; // App Password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail->Port       = 465;
             $mail->CharSet    = 'UTF-8';
 
             // ၅။ ပို့သူနှင့် လက်ခံသူ
@@ -81,4 +81,5 @@ if (isset($_GET['id'])) {
     header("Location: admin.php");
     exit();
 }
+
 
