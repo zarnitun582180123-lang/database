@@ -34,7 +34,7 @@ if (isset($_GET['id'])) {
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'zarnitun582180123@gmail.com'; 
-            $mail->Password   = 'kqfv xeen uqje kbbp'; // App Password
+            $mail->Password   = 'kqfvxeenuqjekbbp'; // App Password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
             $mail->CharSet    = 'UTF-8';
@@ -81,3 +81,4 @@ if (isset($_GET['id'])) {
     header("Location: admin.php");
     exit();
 }
+
