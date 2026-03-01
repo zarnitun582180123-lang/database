@@ -1,6 +1,5 @@
 <?php
 // supabase.php
-// Note: File အဆုံးတွင် ?> ပိတ်ရန်မလိုပါ။ ၎င်းသည် 'Headers already sent' error ကို ကာကွယ်ပေးသည်။
 
 // ၁။ Render Environment Variables များ
 define('SUPABASE_URL', getenv('SUPABASE_URL'));
@@ -108,3 +107,4 @@ function delete_student($id) {
     $res = curl_request($url, 'DELETE');
     return ($res['code'] >= 200 && $res['code'] < 300);
 }
+?>
