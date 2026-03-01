@@ -18,3 +18,7 @@ RUN composer install --no-interaction --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
+
+# --- ဤနေရာတွင် အောက်ပါ line ကို အသစ်ထည့်ပါ ---
+# Apache ရော PHP Worker ရော တစ်ပြိုင်တည်း run ခိုင်းခြင်း
+CMD apache2-foreground & php /var/www/html/worker.php
