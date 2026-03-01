@@ -1,52 +1,46 @@
 <?php
+// worker.php
 require_once 'supabase.php';
 require 'vendor/autoload.php';
 
-$redis = new Predis\Client([
-    'scheme' => 'tcp',
-    'host'   => '127.0.0.1',
-    'port'   => 6379,
-    'read_write_timeout' => -1 
-]);
+// Redis ချိတ်ဆက်ခြင်း
+try {
+    $redis_url = getenv('REDIS_URL');
+    $redis = new Predis\Client($redis_url);
+    echo "Worker started. Waiting for data...\n";
+} catch (Exception $e) {
+    die("Redis Connection Error: " . $e->getMessage());
+}
 
-echo "Worker စတင်နေပါပြီ... ဒေတာများကို စောင့်ဆိုင်းနေသည်...\n";
-
+// အမြဲတမ်း Run နေမည့် loop (Infinite Loop)
 while (true) {
-    // Queue မှ ဒေတာကို ဆွဲထုတ်ခြင်း
-    $data = $redis->blpop('registration_queue', 0);
-    $student = json_decode($data[1], true);
+    // Queue ထဲက data ကို ဆွဲထုတ်ခြင်း (BLPOP သည် data မရှိမချင်း စောင့်နေမည်)
+    // 0 ဆိုသည်မှာ data ရောက်လာသည်အထိ အချိန်အကန့်အသတ်မရှိ စောင့်ခိုင်းခြင်းဖြစ်သည်
+    $result = $redis->blpop('registration_queue', 0);
 
-    // Retry count ကို စစ်ဆေးခြင်း (မပါလာရင် 0 လို့ သတ်မှတ်မယ်)
-    $retry_count = isset($student['retry_count']) ? $student['retry_count'] : 0;
-    $max_retries = 3;
+    if ($result) {
+        $data_json = $result[1];
+        $student = json_decode($data_json, true);
 
-    echo "ကျောင်းသား {$student['name']} ၏ ဒေတာကို သိမ်းဆည်းနေပါသည် (ကြိုးစားမှု - " . ($retry_count + 1) . ")...\n";
+        echo "Processing registration for: " . $student['name'] . "\n";
 
-    $success = sendToSupabase(
-        $student['name'], 
-        $student['email'], 
-        $student['message'], 
-        $student['student_id'], 
-        $student['course_id']
-    );
+        // Supabase ထဲသို့ ထည့်ခြင်း (supabase.php ထဲက function ကို သုံးသည်)
+        $success = sendToSupabase(
+            $student['name'],
+            $student['email'],
+            $student['message'],
+            $student['student_id'],
+            $student['course_id']
+        );
 
-    if ($success) {
-        echo "✅ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။\n";
-    } else {
-        if ($retry_count < $max_retries) {
-            // Retry လုပ်မည့်အကြိမ်ရေ မပြည့်သေးပါက Queue ထဲ ပြန်ထည့်မည်
-            $student['retry_count'] = $retry_count + 1;
-            
-            echo "❌ အမှားရှိနေပါသည်... ၅ စက္ကန့်အကြာတွင် ပြန်ကြိုးစားပါမည် (ကျန်ရှိသည့်အကြိမ်ရေ: " . ($max_retries - $student['retry_count']) . ")...\n";
-            
-            sleep(5);
-            $redis->rpush('registration_queue', json_encode($student));
+        if ($success) {
+            echo "Successfully sent to Supabase!\n";
         } else {
-            // ၃ ကြိမ်ပြည့်သွားပါက လက်လျှော့လိုက်ပြီး Error Log ထုတ်မည်
-            echo "⚠️ အကြိမ်ကြိမ် ကြိုးစားသော်လည်း မအောင်မြင်ပါ။ ဒေတာကို စာရင်းမှ ဖယ်ထုတ်လိုက်ပါပြီ (Dead Letter Queue သို့ ပို့သင့်သည်)။\n";
-            // ဒီနေရာမှာ မအောင်မြင်တဲ့ ဒေတာတွေကို text file တစ်ခုထဲ သိမ်းထားတာမျိုး (သို့) 
-            // 'failed_jobs' ဆိုတဲ့ queue ထဲ သီးသန့် ပို့ထားတာမျိုး လုပ်နိုင်ပါတယ်။
-            file_put_contents('failed_registrations.log', json_encode($student) . PHP_EOL, FILE_APPEND);
+            echo "Failed to send to Supabase. Data: " . $data_json . "\n";
+            // မအောင်မြင်လျှင် Queue ထဲ ပြန်ထည့်ချင်က ထည့်နိုင်သည် (Optional)
         }
     }
+    
+    // Server ဝန်မပိစေရန် ခေတ္တနားခြင်း
+    usleep(500000); // 0.5 စက္ကန့်
 }
