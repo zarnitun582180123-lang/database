@@ -10,19 +10,19 @@ $error = false;
 $redis_error_msg = "";
 
 // ၁။ Redis ချိတ်ဆက်ရန် (Cloud URL ကို ဦးစားပေးသုံးမည်)
+// register.php ထဲက Redis connection အပိုင်း
 try {
-    $redis_url = getenv('REDIS_URL');
+    $redis_url = getenv('redis://default:AbbGAAIncDIzZjljNzQ3ZDFjNWY0NmRmODgyZjY2MDI2NGUxODQzNnAyNDY3OTA@literate-hound-46790.upstash.io:6379');
     if ($redis_url) {
+        // Render/Upstash အတွက် SSL/TLS support ပါအောင် ပြင်ဆင်ခြင်း
         $redis = new Predis\Client($redis_url);
+        $redis->connect(); // ချိတ်ဆက်မှုကို စမ်းသပ်ခြင်း
     } else {
-        $redis = new Predis\Client([
-            'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
-            'port'   => 6379,
-        ]);
+        $redis = new Predis\Client('redis://127.0.0.1:6379');
     }
 } catch (Exception $e) {
     $redis_error_msg = "Redis ချိတ်ဆက်မှု မအောင်မြင်ပါ - " . $e->getMessage();
+    $error = true;
 }
 
 
@@ -197,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 </html>
+
 
 
 
