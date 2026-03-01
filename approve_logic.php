@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
             $mail->Username   = 'zarnitun582180123@gmail.com'; 
             $mail->Password   = 'kqfvxeenuqjekbbp'; // App Password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 465;
+            $mail->Port       = 587;
             $mail->CharSet    = 'UTF-8';
 
             // ၅။ ပို့သူနှင့် လက်ခံသူ
@@ -63,13 +63,7 @@ if (isset($_GET['id'])) {
                     <p style='font-size: 0.9rem; color: #777;'>လေးစားစွာဖြင့်၊<br>University Database Team<br>UCS Monywa</p>
                 </div>
             ";
-$mail->SMTPOptions = array(
-    'ssl' => array(
-        'verify_peer' => false,
-        'verify_peer_name' => false,
-        'allow_self_signed' => true
-    )
-);
+
             $mail->send();
             
             header("Location: admin.php?status=approved_and_emailed");
@@ -87,6 +81,7 @@ $mail->SMTPOptions = array(
     header("Location: admin.php");
     exit();
 }
+
 
 
 
