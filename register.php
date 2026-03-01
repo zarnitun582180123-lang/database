@@ -7,16 +7,22 @@ $message_sent = false;
 $error = false;
 $redis_error_msg = "";
 
-// ၁။ Redis ချိတ်ဆက်ရန်
+// ၁။ Redis ချိတ်ဆက်ရန် (Cloud URL ကို ဦးစားပေးသုံးမည်)
 try {
-    $redis = new Predis\Client([
-        'scheme' => 'tcp',
-        'host'   => '127.0.0.1',
-        'port'   => 6379,
-    ]);
+    $redis_url = getenv('REDIS_URL');
+    if ($redis_url) {
+        $redis = new Predis\Client($redis_url);
+    } else {
+        $redis = new Predis\Client([
+            'scheme' => 'tcp',
+            'host'   => '127.0.0.1',
+            'port'   => 6379,
+        ]);
+    }
 } catch (Exception $e) {
     $redis_error_msg = "Redis ချိတ်ဆက်မှု မအောင်မြင်ပါ - " . $e->getMessage();
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ၂။ Form မှ ရလာသော Data များကို စုစည်းခြင်း
@@ -187,4 +193,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 </body>
+
 </html>
