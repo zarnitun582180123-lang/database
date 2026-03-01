@@ -63,7 +63,13 @@ if (isset($_GET['id'])) {
                     <p style='font-size: 0.9rem; color: #777;'>လေးစားစွာဖြင့်၊<br>University Database Team<br>UCS Monywa</p>
                 </div>
             ";
-
+$mail->SMTPOptions = array(
+    'ssl' => array(
+        'verify_peer' => false,
+        'verify_peer_name' => false,
+        'allow_self_signed' => true
+    )
+);
             $mail->send();
             
             header("Location: admin.php?status=approved_and_emailed");
@@ -81,5 +87,6 @@ if (isset($_GET['id'])) {
     header("Location: admin.php");
     exit();
 }
+
 
 
