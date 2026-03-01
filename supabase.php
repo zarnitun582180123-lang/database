@@ -71,4 +71,18 @@ function get_student_count() {
     $res = curl_request($url);
     return is_array($res['data']) ? count($res['data']) : 0;
 }
+// ၄။ ကျောင်းသားအားလုံးကို ဆွဲထုတ်ရန် (admin.php အတွက်)
+function get_students() {
+    // courses table နဲ့ join ထားပြီး ကျောင်းသားစာရင်းကို ဆွဲထုတ်ခြင်း
+    $url = SUPABASE_URL . "/rest/v1/students?select=*,courses(course_name)&order=created_at.desc";
+    $res = curl_request($url);
+    
+    if (!empty($res['data']) && is_array($res['data'])) {
+        return $res['data'];
+    }
+    
+    return []; // Data မရှိရင် Empty Array ပြန်ပေးမယ်
+}
 ?>
+
+
