@@ -171,17 +171,7 @@ if (!empty($students) && is_array($students)) {
             }
         }
     </script>
-    <?php if (isset($_GET['status'])): ?>
-    <script>
-        <?php if ($_GET['status'] == 'approved_and_emailed'): ?>
-            alert('Approve လုပ်ပြီး ကျောင်းသားထံ Email ပို့ပြီးပါပြီ။ ✅');
-        <?php elseif ($_GET['status'] == 'approved_but_mail_failed'): ?>
-            alert('Approve လုပ်ခြင်း အောင်မြင်သော်လည်း Email ပို့ရန် အခက်အခဲရှိနေပါသည်။ ⚠️ \nError: <?php echo htmlspecialchars($_GET['error']); ?>');
-        <?php elseif ($_GET['status'] == 'error_not_found'): ?>
-            alert('ကျောင်းသားဒေတာ ရှာမတွေ့ပါ။ ❌');
-        <?php endif; ?>
-    </script>
-    <?php endif; ?>
 </body>
 </html>
+
 
