@@ -2,8 +2,8 @@
 // supabase.php
 // define('SUPABASE_URL', 'https://afyuttkumaldgsdneutm.supabase.co');
 // define('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeXV0dGt1bWFsZGdzZG5ldXRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTI0NjAsImV4cCI6MjA4NzcyODQ2MH0.2wirSdNoxvb3wuu3zdUUukEhMnXeAiBw7d91qgeRub0'); 
-define('SUPABASE_URL', getenv('SUPABASE_URL'));
-define('SUPABASE_KEY', getenv('SUPABASE_KEY'));
+define('SUPABASE_URL', getenv('https://afyuttkumaldgsdneutm.supabase.co'));
+define('SUPABASE_KEY', getenv('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeXV0dGt1bWFsZGdzZG5ldXRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTI0NjAsImV4cCI6MjA4NzcyODQ2MH0.2wirSdNoxvb3wuu3zdUUukEhMnXeAiBw7d91qgeRub0'));
 function curl_request($url, $method = 'GET', $data = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -76,3 +76,4 @@ function approve_student($id) {
 }
 
 ?>
+
