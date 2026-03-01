@@ -47,7 +47,11 @@ function get_students() {
 function get_courses() {
     $url = SUPABASE_URL . "/rest/v1/courses?select=*&order=course_name.asc";
     $res = curl_request($url);
-    return $res['data'] ?: [];
+    return [
+        ['id' => 1, 'course_name' => 'Computer Science'],
+        ['id' => 2, 'course_name' => 'Computer Technology'],
+        ['id' => 3, 'course_name' => 'Information Technology']
+    ];
 }
 
 // ၄။ ID ဖြင့် ကျောင်းသားကို ရှာရန်
@@ -70,4 +74,5 @@ function approve_student($id) {
     $res = curl_request($url, 'PATCH', ['status' => 'approved']);
     return ($res['code'] >= 200 && $res['code'] < 300);
 }
+
 ?>
