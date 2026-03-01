@@ -43,10 +43,10 @@ function get_students() {
     return $res['data'] ?: [];
 }
 
-// ၃။ Course စာရင်းများကို ဆွဲထုတ်ရန်
 function get_courses() {
     $url = SUPABASE_URL . "/rest/v1/courses?select=*&order=course_name.asc";
     $res = curl_request($url);
+    // ဒီနေရာမှာ Supabase က လာတဲ့ data ကို မသုံးဘဲ အောက်က static array ကို ပြန်ပေးထားတယ်
     return [
         ['id' => 1, 'course_name' => 'Computer Science'],
         ['id' => 2, 'course_name' => 'Computer Technology'],
@@ -76,4 +76,5 @@ function approve_student($id) {
 }
 
 ?>
+
 
