@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="email" name="email" placeholder="name@cu.edu.mm" required>
             </div>
 
-            <!-- <div class="form-group">
+            <div class="form-group">
                 <label>အထူးပြုဘာသာ (Major)</label>
                 <select name="course_id" required>
                     <option value="">-- သင်တန်းရွေးချယ်ပါ --</option>
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['course_name']); ?></option>
                     <?php endforeach; ?>
                 </select>
-            </div> -->
+            </div>
             
             <div class="form-group">
                 <label>မှတ်ချက် (Message/Note)</label>
@@ -195,4 +195,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 </html>
+
 
