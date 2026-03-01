@@ -1,46 +1,43 @@
 <?php
-// worker.php
-require_once 'supabase.php';
 require 'vendor/autoload.php';
+require_once 'supabase.php';
 
-// Redis ချိတ်ဆက်ခြင်း
-try {
-    $redis_url = getenv('REDIS_URL');
-    $redis = new Predis\Client($redis_url);
-    echo "Worker started. Waiting for data...\n";
-} catch (Exception $e) {
-    die("Redis Connection Error: " . $e->getMessage());
-}
+// Redis Configuration
+$redis_url = getenv('REDIS_URL');
 
-// အမြဲတမ်း Run နေမည့် loop (Infinite Loop)
 while (true) {
-    // Queue ထဲက data ကို ဆွဲထုတ်ခြင်း (BLPOP သည် data မရှိမချင်း စောင့်နေမည်)
-    // 0 ဆိုသည်မှာ data ရောက်လာသည်အထိ အချိန်အကန့်အသတ်မရှိ စောင့်ခိုင်းခြင်းဖြစ်သည်
-    $result = $redis->blpop('registration_queue', 0);
+    try {
+        $client = new Predis\Client($redis_url);
+        echo "Worker: Connected to Redis. Waiting for data...\n";
 
-    if ($result) {
-        $data_json = $result[1];
-        $student = json_decode($data_json, true);
+        while (true) {
+            // blpop ကို စက္ကန့် ၃၀ ပဲ စောင့်ခိုင်းပါမယ် (Timeout error မတက်စေရန်)
+            $data = $client->blpop(['registration_queue'], 30);
 
-        echo "Processing registration for: " . $student['name'] . "\n";
+            if ($data) {
+                $payload = json_decode($data[1], true);
+                $name = $payload['name'];
+                echo "Worker: Processing registration for: $name\n";
 
-        // Supabase ထဲသို့ ထည့်ခြင်း (supabase.php ထဲက function ကို သုံးသည်)
-        $success = sendToSupabase(
-            $student['name'],
-            $student['email'],
-            $student['message'],
-            $student['student_id'],
-            $student['course_id']
-        );
+                $success = sendToSupabase(
+                    $payload['name'],
+                    $payload['email'],
+                    $payload['message'],
+                    $payload['student_id'],
+                    $payload['course_id']
+                );
 
-        if ($success) {
-            echo "Successfully sent to Supabase!\n";
-        } else {
-            echo "Failed to send to Supabase. Data: " . $data_json . "\n";
-            // မအောင်မြင်လျှင် Queue ထဲ ပြန်ထည့်ချင်က ထည့်နိုင်သည် (Optional)
+                if ($success) {
+                    echo "Worker: Successfully sent to Supabase!\n";
+                } else {
+                    echo "Worker: Failed to send to Supabase.\n";
+                }
+            }
         }
+    } catch (Exception $e) {
+        // Timeout သို့မဟုတ် Connection ပြတ်သွားလျှင် ၅ စက္ကန့်နားပြီး ပြန်ချိတ်မည်
+        echo "Worker Connection Error: " . $e->getMessage() . "\n";
+        echo "Worker: Reconnecting in 5 seconds...\n";
+        sleep(5);
     }
-    
-    // Server ဝန်မပိစေရန် ခေတ္တနားခြင်း
-    usleep(500000); // 0.5 စက္ကန့်
 }
