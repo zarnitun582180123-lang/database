@@ -1,26 +1,31 @@
-
 <?php
+// ဘာစာသားမှ မရှိစေရ (Space တောင် မပါရပါ)
 session_start();
+
 if (!isset($_SESSION['admin_logged_in'])) {
     header("Location: login.php");
     exit();
 }
+
 require_once 'supabase.php';
+
+// ကျောင်းသားစာရင်းကို ဆွဲထုတ်ခြင်း
 $students = get_students();
 
 // Status အရ 'pending' ကို ထိပ်ဆုံးပို့ရန် Sort လုပ်ခြင်း
-if (!empty($students)) {
+if (!empty($students) && is_array($students)) {
     usort($students, function($a, $b) {
-        // pending ကို အရင်ပြချင်တာဖြစ်လို့ status ကို နှိုင်းယှဉ်မယ်
+        // pending ကို အရင်ပြမည်
         if ($a['status'] === 'pending' && $b['status'] !== 'pending') return -1;
         if ($a['status'] !== 'pending' && $b['status'] === 'pending') return 1;
         
-        // status တူနေရင် ရက်စွဲအလိုက် အသစ်ဆုံးကို ထိပ်မှာထားမယ်
-        return strtotime($b['created_at']) - strtotime($a['created_at']);
+        // status တူနေရင် ရက်စွဲအလိုက် အသစ်ဆုံးကို ထိပ်မှာထားမည်
+        $dateA = isset($a['created_at']) ? strtotime($a['created_at']) : 0;
+        $dateB = isset($b['created_at']) ? strtotime($b['created_at']) : 0;
+        return $dateB - $dateA;
     });
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,10 +77,10 @@ if (!empty($students)) {
         .id-text { color: var(--accent); font-family: 'Courier New', monospace; font-weight: bold; }
         .badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
         
-        .btn-action { text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: 0.2s; padding: 5px 10px; border-radius: 4px; }
+        .btn-action { text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: 0.2s; padding: 5px 10px; border-radius: 4px; display: inline-block; }
         .btn-approve { color: var(--primary); background: rgba(62, 207, 142, 0.1); }
         .btn-delete { color: var(--danger); background: rgba(239, 68, 68, 0.1); margin-left: 10px; }
-        .btn-action:hover { opacity: 0.8; text-decoration: none; transform: translateY(-1px); }
+        .btn-action:hover { opacity: 0.8; transform: translateY(-1px); }
 
         .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
 
