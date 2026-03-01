@@ -1,10 +1,12 @@
 <?php
 // supabase.php
+// Note: File အဆုံးတွင် ?> ပိတ်ရန်မလိုပါ။ ၎င်းသည် 'Headers already sent' error ကို ကာကွယ်ပေးသည်။
 
-// Render Dashboard ရဲ့ Environment Variables ထဲက Key နာမည်တွေကိုပဲ သုံးရပါမယ်
+// ၁။ Render Environment Variables များ
 define('SUPABASE_URL', getenv('SUPABASE_URL'));
 define('SUPABASE_KEY', getenv('SUPABASE_KEY'));
 
+// ၂။ General CURL Request Function
 function curl_request($url, $method = 'GET', $data = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -24,7 +26,6 @@ function curl_request($url, $method = 'GET', $data = null) {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     
-    // Render Logs မှာ အမှားစစ်နိုင်ရန် Log ထုတ်ခြင်း
     if ($httpCode < 200 || $httpCode >= 300) {
         error_log("Supabase API Error: Code $httpCode | Response: $response");
     }
@@ -33,7 +34,7 @@ function curl_request($url, $method = 'GET', $data = null) {
     return ['code' => $httpCode, 'data' => json_decode($response, true)];
 }
 
-// ကျောင်းသားသစ် စာရင်းသွင်းရန်
+// ၃။ ကျောင်းသားသစ် စာရင်းသွင်းရန် (Used in Worker/Register)
 function sendToSupabase($name, $email, $message, $student_id, $course_id) {
     $url = SUPABASE_URL . "/rest/v1/students";
     $payload = [
@@ -48,12 +49,11 @@ function sendToSupabase($name, $email, $message, $student_id, $course_id) {
     return ($res['code'] >= 200 && $res['code'] < 300);
 }
 
-// Course စာရင်းများကို ဆွဲထုတ်ရန်
+// ၄။ Course စာရင်းများကို ဆွဲထုတ်ရန်
 function get_courses() {
     $url = SUPABASE_URL . "/rest/v1/courses?select=*&order=course_name.asc";
     $res = curl_request($url);
     
-    // API မှ data ရလျှင် ၎င်းကိုသုံးမည်၊ မရလျှင် Default စာရင်းကို ပြန်ပေးမည်
     if (!empty($res['data']) && is_array($res['data'])) {
         return $res['data'];
     }
@@ -65,48 +65,46 @@ function get_courses() {
     ];
 }
 
-// Approved ဖြစ်ပြီးသား ကျောင်းသားအရေအတွက်
+// ၅။ Approved ဖြစ်ပြီးသား ကျောင်းသားအရေအတွက် (Dashboard အတွက်)
 function get_student_count() {
     $url = SUPABASE_URL . "/rest/v1/students?status=eq.approved&select=id";
     $res = curl_request($url);
     return is_array($res['data']) ? count($res['data']) : 0;
 }
-// ၄။ ကျောင်းသားအားလုံးကို ဆွဲထုတ်ရန် (admin.php အတွက်)
+
+// ၆။ ကျောင်းသားအားလုံးကို ဆွဲထုတ်ရန် (admin.php အတွက်)
 function get_students() {
-    // courses table နဲ့ join ထားပြီး ကျောင်းသားစာရင်းကို ဆွဲထုတ်ခြင်း
     $url = SUPABASE_URL . "/rest/v1/students?select=*,courses(course_name)&order=created_at.desc";
     $res = curl_request($url);
     
     if (!empty($res['data']) && is_array($res['data'])) {
         return $res['data'];
     }
-    
-    return []; // Data မရှိရင် Empty Array ပြန်ပေးမယ်
+    return [];
 }
-// ၅။ ID ဖြင့် ကျောင်းသားဒေတာ ရှာရန်
+
+// ၇။ ID ဖြင့် ကျောင်းသားဒေတာ ရှာရန် (Email ပို့ရန်အတွက်)
 function get_student_by_id($id) {
-    // courses table နှင့် join ပြီး ဆွဲထုတ်ပါမည်
     $url = SUPABASE_URL . "/rest/v1/students?id=eq." . $id . "&select=*,courses(course_name)";
     $res = curl_request($url);
     
     if (!empty($res['data']) && is_array($res['data'])) {
-        return $res['data'][0]; // ပထမဆုံး record ကို ပြန်ပေးမည်
+        return $res['data'][0];
     }
     return null;
 }
 
-// ၆။ ကျောင်းသားကို Approve လုပ်ရန်
+// ၈။ ကျောင်းသားကို Approve လုပ်ရန် (Status Update)
 function approve_student($id) {
     $url = SUPABASE_URL . "/rest/v1/students?id=eq." . $id;
     $payload = ['status' => 'approved'];
-    
-    // PATCH method ဖြင့် status ကို update လုပ်ခြင်း
     $res = curl_request($url, 'PATCH', $payload);
-    
-    // HTTP Code 200 သို့မဟုတ် 204 ဆိုလျှင် အောင်မြင်သည်ဟု သတ်မှတ်သည်
     return ($res['code'] >= 200 && $res['code'] < 300);
 }
-?>
 
-
-
+// ၉။ ကျောင်းသားကို ဖျက်ရန် (Delete Logic တွင် သုံးနိုင်ရန်)
+function delete_student($id) {
+    $url = SUPABASE_URL . "/rest/v1/students?id=eq." . $id;
+    $res = curl_request($url, 'DELETE');
+    return ($res['code'] >= 200 && $res['code'] < 300);
+}
