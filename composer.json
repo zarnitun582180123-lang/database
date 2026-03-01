@@ -1,6 +1,6 @@
 {
     "require": {
-        "predis/predis": "^2.0",
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "*",
+        "predis/predis": "^3.4"
     }
 }
