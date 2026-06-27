@@ -1,6 +1,5 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // URL မှာ နောက်ဆုံးက contacts ဆိုတာ သေချာပါစေ
     $url = 'https://afyuttkumaldgsdneutm.supabase.co/rest/v1/contacts';
     $api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeXV0dGt1bWFsZGdzZG5ldXRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTI0NjAsImV4cCI6MjA4NzcyODQ2MH0.2wirSdNoxvb3wuu3zdUUukEhMnXeAiBw7d91qgeRub0'; // ကိုယ့် Key အပြည့်အစုံ ပြန်ထည့်ပါ
 
@@ -26,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
     $response = curl_exec($ch);
     if (curl_errno($ch)) {
-        echo 'Curl error: ' . curl_error($ch); // ဘာလို့ ချိတ်မရလဲဆိုတာ စာတန်းပြလိမ့်မယ်
+        echo 'Curl error: ' . curl_error($ch); 
     }
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
