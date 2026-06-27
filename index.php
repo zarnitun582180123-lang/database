@@ -2,8 +2,7 @@
 require_once 'supabase.php';
 $student_count = get_student_count();
 
-// တကယ်လို့ 0 ပဲ ပေါ်နေရင် ဒါကိုသုံးပြီး စစ်ကြည့်ပါ
-// var_dump($student_count); 
+
 ?>
 
 <!DOCTYPE html>
