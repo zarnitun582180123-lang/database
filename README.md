@@ -1,29 +1,48 @@
-# UCS Monywa - Student & Event Management Portal (Admin Panel)
+# 🏛️ UCS Monywa Events Management System
 
-A secure and responsive web application designed for administration at the University of Computer Studies, Monywa. This portal serves as a centralized dashboard to manage student registrations, approve accounts, and coordinate university events with automated notification systems.
+[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
+[![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
+
+An enterprise-grade, high-performance web application tailored to streamline academic seminars, campus festivals, technical workshops, and administrative ceremonies at the **University of Computer Studies, Monywa (UCSM)**.
+
+---
 
 ## 🚀 Key Features
 
-- **Dashboard Analytics:** Real-time summary counts of Total Registered, Approved, and Pending students using database triggers.
-- **Student Approval Workflow:** Admin can view pending registrations sorted by latest date and approve students with a structured logical flow.
-- **Automated Email Notifications:** Integrated with **PHPMailer** to automatically send confirmation and welcome emails to students once approved.
-- **Event Management System:** - Create, view, and delete university events (e.g., Freshers' Welcome).
-  - Define location, date, time, and specific participant limits (`max_participants`).
-  - Track registered student lists for individual events.
-  - Broadcast new event notification emails to all students at once.
+*   **📅 Full Event Lifecycle Management:** Administrative dashboard to dynamically publish, manage, and archive university events.
+*   **✍️ Seamless Online Registration (RSVP):** Quick registration modules for students, faculty, and outside guests with seat capacity limits.
+*   **⚡ Redis-Powered Speed:** Advanced caching mechanisms to lower database queries under heavy student traffic.
+*   **📩 Background Queue Handlers:** Offloads resource-heavy jobs (like sending confirmation emails) to background Redis queues for sub-second UI responsiveness.
+*   **🐳 Docker Integration:** Fully-containerized setup for predictable local development and production deployments.
 
-## 🛠️ Tech Stack & Dependencies
+---
 
-- **Backend Language:** PHP (Session-based Authentication, cURL API handling)
-- **Database / BaaS:** Supabase (REST API integration with secure API Keys)
-- **Dependency Manager:** Composer
-- **Libraries used:** - `phpmailer/phpmailer` (SMTP Email delivery)
-  - `predis/predis` (Optional caching/session performance)
-- **Frontend UI:** HTML5, CSS3 (Modern Dark Theme UI inspired by Supabase dashboard layout), FontAwesome icons.
+## 🛠️ Tech Stack
 
-## ⚙️ Installation & Setup
+*   **Backend Framework:** PHP 8.2+ & Laravel (Modern MVC & Service Layer)
+*   **Database:** MySQL 8.0+
+*   **Caching & Queue Broker:** Redis (using high-performance connection drivers)
+*   **Containerization:** Docker Desktop & Docker Compose
 
-1. Clone this repository.
-2. Install dependencies using Composer:
-   ```bash
-   composer install
+---
+
+## ⚙️ Getting Started
+
+Follow these instructions to spin up the development environment on your local machine:
+
+### Prerequisites
+
+Ensure you have the following installed:
+*   [PHP 8.2 or higher](https://www.php.net/)
+*   [Composer](https://getcomposer.org/)
+*   [Node.js & NPM](https://nodejs.org/)
+*   [Redis Server](https://redis.io/) (For Windows users, an installer is provided at `Redis-x64-3.0.504.msi` in the root folder)
+
+### Installation Steps
+
+#### 1. Clone the Repository
+```bash
+git clone [https://github.com/your-username/UCS-Monywa-Events.git](https://github.com/your-username/UCS-Monywa-Events.git)
+cd UCS-Monywa-Events-main
